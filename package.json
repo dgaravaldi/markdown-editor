@@ -1,0 +1,24 @@
+{
+  "name": "Editor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "start-debug": "set DEBUG=true & electron .",
+    "build:windows": "electron-builder --win --dir",
+    "dist:windows": "electron-builder --win",
+    "build:macos": "electron-builder --macos --dir",
+    "dist:macos": "electron-builder --macos"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^11.0.4",
+    "electron-builder": "^22.9.1"
+  },
+  "dependencies": {
+    "simplemde": "^1.11.2"
+  }
+}

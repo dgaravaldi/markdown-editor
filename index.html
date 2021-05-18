@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,
+            initial-scale=1.0">
+    <meta
+            http-equiv="Content-Security-Policy"
+            content="script-src 'self' 'unsafe-inline';"
+    />
+    <link rel="stylesheet" href="./node_modules/simplemde/dist/simplemde.min.css">
+    <script src="./node_modules/simplemde/dist/simplemde.min.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+        }
+
+        .CodeMirror {
+            flex: 1;
+        }
+    </style>
+    <title>MD-Editor</title>
+</head>
+<body>
+<h1>Editor</h1>
+<textarea id="editor"></textarea>
+<script>
+    //https://github.com/sparksuite/simplemde-markdown-editor
+    var editor = new SimpleMDE({
+        element: document.getElementById('editor')
+    });
+
+    const { ipcRenderer } = require('electron');
+
+    ipcRenderer.on('editor-event', (event, arg) => {
+        console.log(arg);
+        // send message back to main process
+        event.sender.send('editor-reply', `Received ${arg}`);
+        if (arg === 'toggle-bold'){
+            editor.toggleBold();
+        }
+
+        if (arg === 'save') {
+            event.sender.send('save', editor.value());
+        }
+    });
+    //This message means that your first messaging channel
+    //works from the renderer process to the main one.
+    ipcRenderer.send('editor-reply', 'Page Loaded');
+
+</script>
+
+</body>
+</html>
