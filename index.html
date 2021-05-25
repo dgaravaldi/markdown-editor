@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,
             initial-scale=1.0">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src-elem -->
+    <!--  'unsafe-eval' is needed for console.log of drop-Event -->
     <meta
             http-equiv="Content-Security-Policy"
-            content="script-src 'self' 'unsafe-inline';"
+            content="script-src 'self' 'unsafe-inline' 'unsafe-eval';"
     />
     <link rel="stylesheet" href="./node_modules/simplemde/dist/simplemde.min.css">
     <script src="./node_modules/simplemde/dist/simplemde.min.js"></script>
@@ -24,10 +26,10 @@
     </style>
     <title>MD-Editor</title>
 </head>
-<body>
+<body id="main_ui">
 <h1>Editor</h1>
 <textarea id="editor"></textarea>
-<script>
+<script script-src="unsave-eval">
     //https://github.com/sparksuite/simplemde-markdown-editor
     var editor = new SimpleMDE({
         element: document.getElementById('editor')
@@ -50,6 +52,33 @@
     //This message means that your first messaging channel
     //works from the renderer process to the main one.
     ipcRenderer.send('editor-reply', 'Page Loaded');
+
+    document.getElementById('main_ui').ondrop = (event) => {
+        console.log('File(s) dropped');
+        event.preventDefault();
+
+        let tmpItems = event.dataTransfer.items;
+        if (tmpItems){
+            console.log(tmpItems);
+            console.log(`kind: ${tmpItems[0].kind}`);
+            if (tmpItems[0].kind === 'file'){
+                let file = tmpItems[0].getAsFile();
+                console.log(`file: ${file.type}, ${file.size},
+                ${file.path} ${file.name} ${file.sha1}`);
+                if (file.size > 0){
+                    let reader = new FileReader();
+                    reader.onload = e => {
+                        //console.log(e.target.result);
+                        editor.codemirror.setValue(e.target.result);
+                    }
+                    reader.readAsText(file);
+                }
+            }
+        }
+
+        //ipcRenderer.send('ondragstart', '/absolute/path/to/the/item')
+    }
+
 
 </script>
 
