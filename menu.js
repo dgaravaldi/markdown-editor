@@ -2,6 +2,7 @@ const {app, Menu, shell, ipcMain, BrowserWindow, globalShortcut, dialog}
         = require('electron');
 
 const fs = require('fs');
+//const fs = require('fs-extra');
 
 const template = [
     {
