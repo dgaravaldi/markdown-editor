@@ -66,7 +66,7 @@
                 if (file.size > 0){
                     let reader = new FileReader();
                     reader.onload = e => {
-                        console.log(e.target.result);
+                        //console.log(e.target.result);
                         editor.codemirror.setValue(e.target.result);
                     }
                     reader.readAsText(file);
